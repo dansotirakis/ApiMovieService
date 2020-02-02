@@ -6,29 +6,31 @@
 # ApiTexoit
 
   
-#####Commands run start project `in you selected directory`:
+#### Commands run start project 
+_`select a directory`_:
 
-- `git clone https://github.com/calebesouza/APIRestTexoit.git`
-- `mvn clean package`
-- `java -jar targer/APIRestTexoit`
+- _`git clone https://github.com/calebesouza/APIRestTexoit.git`_
+- _`mvn clean package`_
+- _`java -jar targer/APIRestTexoit`_
 
 
-#####Know endpoints conssuming:
+#### Know endpoints conssuming:
   
   - Acess points
   
-  > 127.0.0.1:8080/swagger-ui.html
+  > _127.0.0.1:8080/swagger-ui.html_
   
-  > 127.0.0.1:8080/movies
+  > _127.0.0.1:8080/movies_
 
-  > 127.0.0.1:8080/interval-awards
+  > _127.0.0.1:8080/interval-awards_
 
   
-#####Run tests: 
-- `mvn clean test`
+#### Run tests: 
+- _`mvn clean test`_
 
 
-    Stack's project:
+#### Stack's project:
+
     Java 8
     Maven
     Swagger

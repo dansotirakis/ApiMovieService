@@ -2,8 +2,8 @@ package br.com.restMovieRaspberryAwardsApi.dto;
 
 import java.io.Serializable;
 
-import br.com.restMovieRaspberryAwardsApi.model.Movie;
 import br.com.restMovieRaspberryAwardsApi.enumeration.ChampionType;
+import br.com.restMovieRaspberryAwardsApi.model.Movie;
 
 public class MovieDTO implements Serializable {
 

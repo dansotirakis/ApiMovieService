@@ -2,8 +2,9 @@ package br.com.restMovieRaspberryAwardsApi.controller;
 
 import java.util.List;
 
-import br.com.restMovieRaspberryAwardsApi.dto.MovieDTO;
 import br.com.restMovieRaspberryAwardsApi.dto.IntervalDTO;
+import br.com.restMovieRaspberryAwardsApi.dto.MovieDTO;
+import br.com.restMovieRaspberryAwardsApi.model.Movie;
 import br.com.restMovieRaspberryAwardsApi.service.MovieService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -6,54 +6,50 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import br.com.restMovieRaspberryAwardsApi.dto.MovieDTO;
 import br.com.restMovieRaspberryAwardsApi.dto.IntervalAwardsDTO;
 import br.com.restMovieRaspberryAwardsApi.dto.IntervalDTO;
+import br.com.restMovieRaspberryAwardsApi.dto.MovieDTO;
 import br.com.restMovieRaspberryAwardsApi.model.Movie;
 import br.com.restMovieRaspberryAwardsApi.repositories.interfaces.MovieRepository;
-import br.com.restMovieRaspberryAwardsApi.service.interfaces.IFilmeService;
+import br.com.restMovieRaspberryAwardsApi.service.interfaces.IMovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class MovieService implements IFilmeService {
+public class MovieService implements IMovieService {
 
   private final URL csvFile = this.getClass().getResource("/movielist.csv");
-  private final String csvResource = ";";
 
   @Autowired
   private MovieRepository movieRepository;
 
-  public MovieService() {
+  public MovieService(MovieRepository movieRepository) {
     super();
+    this.movieRepository = movieRepository;
   }
 
   @Override
   public void insertRecords() {
-    List<MovieDTO> filmes = uploadCsvFile();
-    this.save(filmes);
-  }
-
-  @Override
-  public List<MovieDTO> listar() {
-    List<MovieDTO> filmesDTO = new ArrayList<>();
-    try {
-      List<Movie> movies = this.findByMovies();
-      for (Movie movie : movies) {
-        filmesDTO.add(new MovieDTO(movie));
-      }
-      return filmesDTO;
-    } catch (Exception e) {
-      return filmesDTO;
-    }
+    List<MovieDTO> movies = uploadCsvFile();
+    this.save(movies);
   }
 
   private List<Movie> findByMovies() {
+    List<Movie> movies = movieRepository.findAll();
+    if (movies.size() == 0) {
+      return new ArrayList<>();
+    }
+    return movies;
+  }
+
+  @Override
+  public List<MovieDTO> listMovie() {
     List<Movie> movies = movieRepository.findAll();
     if (movies.size() == 0) {
       return new ArrayList<>();
@@ -82,7 +78,7 @@ public class MovieService implements IFilmeService {
   }
 
   private IntervalAwardsDTO searchLongestRangeProducerAwards() {
-    List<IntervalAwardsDTO> intervalosDTO = new ArrayList<>();
+    List<IntervalAwardsDTO> intervalsDTO = new ArrayList<>();
     try {
       List<Movie> movies = this.findByMovies();
       if (movies.size() == 0) {
@@ -95,29 +91,29 @@ public class MovieService implements IFilmeService {
         IntervalAwardsDTO intervalo = new IntervalAwardsDTO();
         for (String produtor : this.getProducers(movie)) {
           intervalo.setProducer(produtor);
-          if (intervalosDTO.contains(intervalo)) {
-            int index = intervalosDTO.indexOf(intervalo);
-            intervalosDTO.get(index).setFollowingWin(movie.getYear());
-            intervalosDTO.get(index).setInterval(this.calculateInterval(intervalosDTO.get(index)));
+          if (intervalsDTO.contains(intervalo)) {
+            int index = intervalsDTO.indexOf(intervalo);
+            intervalsDTO.get(index).setFollowingWin(movie.getYear());
+            intervalsDTO.get(index).setInterval(this.calculateInterval(intervalsDTO.get(index)));
           } else {
             IntervalAwardsDTO novoIntervalo = new IntervalAwardsDTO();
             novoIntervalo.setPreviousWin(movie.getYear());
             novoIntervalo.setFollowingWin(movie.getYear());
             novoIntervalo.setInterval(0);
             novoIntervalo.setProducer(produtor);
-            intervalosDTO.add(novoIntervalo);
+            intervalsDTO.add(novoIntervalo);
           }
         }
       }
-      Collections.sort(intervalosDTO);
-      return intervalosDTO.get(intervalosDTO.size() - 1);
+      Collections.sort(intervalsDTO);
+      return intervalsDTO.get(intervalsDTO.size() - 1);
     } catch (Exception e) {
       return new IntervalAwardsDTO();
     }
   }
 
   private IntervalAwardsDTO searchProducerTwoPrizesFaster() {
-    List<IntervalAwardsDTO> intervalosDTO = new ArrayList<>();
+    List<IntervalAwardsDTO> intervalsDTO = new ArrayList<>();
     try {
       List<Movie> movies = this.findByMovies();
       if (movies.size() == 0) {
