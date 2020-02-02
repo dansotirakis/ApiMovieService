@@ -5,9 +5,9 @@ import java.util.List;
 import br.com.restMovieRaspberryAwardsApi.dto.IntervalDTO;
 import br.com.restMovieRaspberryAwardsApi.dto.MovieDTO;
 
-public interface IFilmeService {
+public interface IMovieService {
 
-  List<MovieDTO> listar();
+  List<MovieDTO> listMovies();
 
   void save(List<MovieDTO> filmes);
 

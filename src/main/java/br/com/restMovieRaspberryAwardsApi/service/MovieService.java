@@ -40,16 +40,21 @@ public class MovieService implements IMovieService {
     this.save(movies);
   }
 
-  private List<Movie> findByMovies() {
-    List<Movie> movies = movieRepository.findAll();
-    if (movies.size() == 0) {
-      return new ArrayList<>();
+  @Override
+  public List<MovieDTO> listMovies() {
+    List<MovieDTO> movieDTO = new ArrayList<>();
+    try {
+      List<Movie> movies = this.findByMovies();
+      for (Movie movie : movies) {
+        movieDTO.add(new MovieDTO(movie));
+      }
+      return movieDTO;
+    } catch (Exception e) {
+      return movieDTO;
     }
-    return movies;
   }
 
-  @Override
-  public List<MovieDTO> listMovie() {
+  private List<Movie> findByMovies() {
     List<Movie> movies = movieRepository.findAll();
     if (movies.size() == 0) {
       return new ArrayList<>();
@@ -126,30 +131,30 @@ public class MovieService implements IMovieService {
         IntervalAwardsDTO intervalo = new IntervalAwardsDTO();
         for (String produtor : this.getProducers(movie)) {
           intervalo.setProducer(produtor);
-          int index = intervalosDTO.indexOf(intervalo);
-          if (intervalosDTO.contains(intervalo)) {
-            if (!intervalosDTO.get(index).getFollowingWin().equals(intervalosDTO.get(index).getPreviousWin())) {
+          int index = intervalsDTO.indexOf(intervalo);
+          if (intervalsDTO.contains(intervalo)) {
+            if (!intervalsDTO.get(index).getFollowingWin().equals(intervalsDTO.get(index).getPreviousWin())) {
               continue;
             }
-            intervalosDTO.get(index).setFollowingWin(movie.getYear());
-            intervalosDTO.get(index).setInterval(this.calculateInterval(intervalosDTO.get(index)));
+            intervalsDTO.get(index).setFollowingWin(movie.getYear());
+            intervalsDTO.get(index).setInterval(this.calculateInterval(intervalsDTO.get(index)));
           } else {
             IntervalAwardsDTO novoIntervalo = new IntervalAwardsDTO();
             novoIntervalo.setPreviousWin(movie.getYear());
             novoIntervalo.setFollowingWin(movie.getYear());
             novoIntervalo.setInterval(0);
             novoIntervalo.setProducer(produtor);
-            intervalosDTO.add(novoIntervalo);
+            intervalsDTO.add(novoIntervalo);
           }
         }
       }
-      Collections.sort(intervalosDTO);
-      for (IntervalAwardsDTO intervalo : intervalosDTO) {
-        if (intervalo.getInterval() != 0) {
-          return intervalo;
+      Collections.sort(intervalsDTO);
+      for (IntervalAwardsDTO intervals : intervalsDTO) {
+        if (intervals.getInterval() != 0) {
+          return intervals;
         }
       }
-      return intervalosDTO.get(0);
+      return intervalsDTO.get(0);
     } catch (Exception e) {
       return new IntervalAwardsDTO();
     }
@@ -161,45 +166,44 @@ public class MovieService implements IMovieService {
   }
 
   private List<MovieDTO> uploadCsvFile() {
-    List<MovieDTO> filmes = new ArrayList<>();
+    List<MovieDTO> movies = new ArrayList<>();
     try {
       BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(csvFile.getPath())));
-      String linha = null;
-      int numeroLinha = 1;
+      String linha;
+      int numberLine = 1;
       while ((linha = reader.readLine()) != null) {
-        if (numeroLinha == 1) {
-          numeroLinha++;
+        if (numberLine == 1) {
+          numberLine++;
           continue;
         }
-        String[] filmeCampos = linha.split(csvResource);
-        filmes.add(new MovieDTO(filmeCampos[0], filmeCampos[1], filmeCampos[2], filmeCampos[3],
-            filmeCampos.length == 5 ? "yes" : ""));
+        final String csvResource = ";";
+        String[] movieFields = linha.split(csvResource);
+        movies.add(new MovieDTO(movieFields[0], movieFields[1], movieFields[2], movieFields[3],
+            movieFields.length == 5 ? "yes" : ""));
       }
       reader.close();
 
     } catch (IOException e) {
       e.printStackTrace();
     }
-    return filmes;
+    return movies;
   }
 
   private List<String> getProducers(Movie movie) {
-    List<String> nomes = new ArrayList<>();
+    List<String> names = new ArrayList<>();
     if (!movie.getProducer().toLowerCase().contains(" and ".toLowerCase())) {
-      nomes.add(movie.getProducer());
-      return nomes;
+      names.add(movie.getProducer());
+      return names;
     }
-    String[] produtoresSepAnd = movie.getProducer().split(" and ");
-    nomes.add(produtoresSepAnd[1]);
-    if (!produtoresSepAnd[0].toLowerCase().contains(", ".toLowerCase())) {
-      nomes.add(produtoresSepAnd[0]);
-      return nomes;
+    String[] producersSepAnd = movie.getProducer().split(" and ");
+    names.add(producersSepAnd[1]);
+    if (!producersSepAnd[0].toLowerCase().contains(", ".toLowerCase())) {
+      names.add(producersSepAnd[0]);
+      return names;
     }
-    String[] produtoresSepVirgula = produtoresSepAnd[0].split(", ");
-    for (String nome : produtoresSepVirgula) {
-      nomes.add(nome);
-    }
-    return nomes;
+    String[] produtocersSepVirgula = producersSepAnd[0].split(", ");
+    names.addAll(Arrays.asList(produtocersSepVirgula));
+    return names;
   }
 
   private int calculateInterval(IntervalAwardsDTO intervalAwardsDTO) {

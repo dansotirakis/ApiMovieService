@@ -4,7 +4,6 @@ import java.util.List;
 
 import br.com.restMovieRaspberryAwardsApi.dto.IntervalDTO;
 import br.com.restMovieRaspberryAwardsApi.dto.MovieDTO;
-import br.com.restMovieRaspberryAwardsApi.model.Movie;
 import br.com.restMovieRaspberryAwardsApi.service.MovieService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,15 +29,15 @@ public class ApiMovieController {
   @ApiOperation(value = "Request list films")
   @RequestMapping(value = "/movies", method = RequestMethod.GET)
   public ResponseEntity<List<MovieDTO>> list() {
-    List<MovieDTO> filmes = movieService.listar();
-    return ResponseEntity.status(HttpStatus.OK).body(filmes);
+    List<MovieDTO> movies = movieService.listMovies();
+    return ResponseEntity.status(HttpStatus.OK).body(movies);
   }
 
   @ApiOperation(value = "Request film selected champions")
   @RequestMapping(value = "/interval-awards", method = RequestMethod.GET)
   public ResponseEntity<IntervalDTO> intervalAwards() {
-    IntervalDTO intervaloPremiosDTO = movieService.findByIntervalAwards();
-    return ResponseEntity.status(HttpStatus.OK).body(intervaloPremiosDTO);
+    IntervalDTO intervalAwardsDTO = movieService.findByIntervalAwards();
+    return ResponseEntity.status(HttpStatus.OK).body(intervalAwardsDTO);
   }
 
 }
